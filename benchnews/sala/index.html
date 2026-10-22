@@ -183,11 +183,23 @@
   .ro b{color:var(--terracotta)}
   .me{font-family:var(--sans);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
   .me b{color:var(--ink);font-weight:600}
+  .chat{margin-top:26px;border-top:3px solid var(--teal);padding-top:12px}
+  .chat h2{font-family:var(--serif);font-weight:500;font-style:italic;font-size:26px;line-height:1.1}
+  .chat .sub{font-family:var(--serif2);font-style:italic;font-size:16px;color:var(--mute);margin:6px 0 10px}
+  .chat .log{display:flex;flex-direction:column;gap:10px;max-width:78ch}
+  .chat .msg{font-family:var(--serif2);font-size:17px;line-height:1.45;color:var(--ink);padding:8px 0 8px 14px;border-left:2px solid var(--rule);white-space:pre-wrap}
+  .chat .msg.me{border-left-color:var(--terracotta);color:var(--espresso)}
+  .chat .msg.ai{border-left-color:var(--teal)}
+  .chat .msg i{font-family:var(--sans);font-style:normal;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute);display:block;margin-bottom:4px}
+  .chat .form{max-width:78ch}
+  .chat .form textarea{min-height:56px}
 
   .login{max-width:520px;margin:40px auto;padding:28px;background:var(--paper);border:1px solid var(--rule)}
   .login h2{font-family:var(--serif);font-weight:500;font-style:italic;font-size:26px;margin-bottom:8px}
   .login p{font-family:var(--serif2);font-size:17px;line-height:1.45;color:var(--espresso);margin-bottom:14px}
   .top-actions{display:flex;gap:14px;align-items:center}
+  .int .cm li .resp{margin-top:8px;padding:8px 0 2px 12px;border-left:2px solid var(--teal);font-size:16px}
+  .int .cm li .resp i{font-family:var(--sans);font-style:normal;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);display:block;margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -326,7 +338,8 @@ function intHtml(key, isBench){
   }
   h += `<button class="toggle" data-act="toggle">${opened.has(key)?"Fechar":"Comentar"}${cs.length?` (${cs.length})`:""}</button></div>`;
   if (opened.has(key)) {
-    h += `<ul class="cm">${cs.map(c=>`<li class="${c.tipo==="claude"?"claude":""}">${esc(c.texto)}<div class="who"><b>${esc(nameOf(c.email))}</b> ${fmtTs(c.t)}${(c.email===meEmail||isAdmin)?` · <button class="toggle" data-act="apagar" data-id="${esc(c.id)}">apagar</button>`:""}</div></li>`).join("")}</ul>`;
+    const RC = RADAR.respostas_comentarios || {};
+    h += `<ul class="cm">${cs.map(c=>{ const r = RC[c.id]; return `<li class="${c.tipo==="claude"?"claude":""}">${esc(c.texto)}<div class="who"><b>${esc(nameOf(c.email))}</b> ${fmtTs(c.t)}${(c.email===meEmail||isAdmin)?` · <button class="toggle" data-act="apagar" data-id="${esc(c.id)}">apagar</button>`:""}</div>${r?`<div class="resp"><i>Resposta da Bru, via Bench</i>${esc(r.resposta)}</div>`:""}</li>`; }).join("")}</ul>`;
     h += `<form class="form" data-act="comment"><textarea rows="2" placeholder="Comentário pro time"></textarea><div class="row"><button class="btn sm" type="submit">Publicar</button></div></form>`;
   }
   return h + `</div>`;
